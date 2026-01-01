@@ -4,7 +4,7 @@ This hospital database is sourced from **Maven Analytics**.
 
 - Dataset: Hospital Patient Records  
 - Provider: [Maven Analytics](https://mavenanalytics.io/data-playground/hospital-patient-records)
-- Tool: PostgreSQL.
+- Tool: ![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue).
 
 The dataset is used for learning and educational purposes.
 
@@ -19,7 +19,12 @@ SELECT COUNT(*) FROM encounters;
 ```
 - Data Range: 2021-2022
 
-We HAVE 5 tables (patients,encounters,procedures,oganizations,payers).
+### :database: Database Tables
+- patients
+- encounters
+- procedures
+- oganizations
+- payers
 
 
 ### Basic Table Inspection Queries
@@ -30,3 +35,4 @@ SELECT * FROM procedures;
 SELECT * FROM organizations;
 SELECT * FROM payers;
 ```
+
