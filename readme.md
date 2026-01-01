@@ -19,7 +19,7 @@ SELECT COUNT(*) FROM encounters;
 ```
 - Data Range: 2021-2022
 
-### :database: Database Tables
+## :database: Database Tables
 - patients
 - encounters
 - procedures
