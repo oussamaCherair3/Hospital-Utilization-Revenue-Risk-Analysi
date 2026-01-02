@@ -54,3 +54,15 @@ During data inspection, the following patterns were identified and handled appro
 - Patient name fields contained non-alphabetic characters, indicating synthetic or unvalidated entries.
 
 
+
+## :bar_chart: Example Analytical Insights
+
+Number of living vs deceased patients based on `deathdate` values.
+- The Total Number Of Alive Patients: 820
+```sql
+SELECT COUNT(*) FROM patients WHERE deathdate IS NULL;
+```
+- The Total Number Of Deceased patients: 154
+```sql
+SELECT COUNT(*) FROM patients WHERE deathdate IS NOT NULL;
+```
