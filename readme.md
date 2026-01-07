@@ -38,11 +38,12 @@ SELECT * FROM organizations;
 SELECT * FROM payers;
 ```
 
-### Table Structure Example (patients)
+### Table Structure Example 
 ```sql
-SELECT column_name, data_type
+SELECT table_name, column_name, data_type, is_nullable
 FROM information_schema.columns
-WHERE table_name = 'patients';
+WHERE table_schema = 'public'
+ORDER BY table_name, ordinal_position
 ```
 ## :broom: Data Cleaning & Standardization
 
@@ -61,12 +62,20 @@ During data inspection, the following patterns were identified and handled appro
 
 Number of living vs deceased patients based on `deathdate` values.
 - The Total Number Of Alive Patients: 820
-```sql
-SELECT COUNT(*) FROM patients WHERE deathdate IS NULL;
-```
 - The Total Number Of Deceased patients: 154
 ```sql
-SELECT COUNT(*) FROM patients WHERE deathdate IS NOT NULL;
+SELECT 
+    COUNT(*) AS total_patients,
+    COUNT(CASE WHEN deathdate IS NULL THEN 1 END) AS living_patients,
+    COUNT(CASE WHEN deathdate IS NOT NULL THEN 1 END) AS deceased_patients
+FROM patients;
+```
+
+- Checking for Invalid dates
+```sql
+SELECT id, birthdate, deathdate
+FROM patients
+WHERE birthdate > deathdate;
 ```
 - The Top 5 most common procedure descriptions performed in the hospital.
 ```sql
