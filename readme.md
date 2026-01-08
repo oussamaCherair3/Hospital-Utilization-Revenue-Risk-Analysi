@@ -77,9 +77,33 @@ SELECT id, birthdate, deathdate
 FROM patients
 WHERE birthdate > deathdate;
 ```
+- Most patients are in the 18-64 group, suggesting focus on adult care
+```sql
+SELECT 
+	CASE
+		WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) < 18 THEN 'Under 18'
+		WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 18 AND 25 THEN '18-25'
+		WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 25 AND 45 THEN '25-45'
+		WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 45 AND 65 THEN '45-65'
+		ELSE '65+'
+	END AS age_group,
+	COUNT(*) AS COUNT
+FROM patients WHERE deathdate IS  NULL
+GROUP BY age_group
+ORDER BY age_group;
+```
 - The Top 5 most common procedure descriptions performed in the hospital.
 ```sql
 SELECT COUNT(p.description) AS procedure_count,p.description FROM patients AS Pat
 INNER JOIN encounters AS EN ON Pat.id = EN.patient
 INNER JOIN procedures AS P ON EN.id=p.encounter group by p.description ORDER BY COUNT(p.description);
+```
+- Average cost per patient (joining Patients and Encounters).
+```sql 
+SELECT p.patient_id, p.first_name || ' ' || p.last_name AS full_name, AVG(e.base_encounter_cost) AS avg_cost
+FROM patients p
+JOIN encounters e ON p.patient_id = e.patient_id
+GROUP BY p.patient_id, full_name
+ORDER BY avg_cost DESC
+LIMIT 10;
 ```
