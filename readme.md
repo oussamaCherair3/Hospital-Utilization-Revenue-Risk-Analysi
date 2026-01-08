@@ -105,5 +105,12 @@ FROM patients p
 JOIN encounters e ON p.patient_id = e.patient_id
 GROUP BY p.patient_id, full_name
 ORDER BY avg_cost DESC
-LIMIT 10;
+```
+- Most common procedures by gender.
+
+```sql
+select pre.description,gender,count(*) as COUNT from procedures AS pre
+INNER JOIN patients AS p ON pre.patient = p.id
+INNER JOIN encounters AS en ON pre.encounter=en.id GROUP BY pre.description,p.gender ORDER BY COUNT DESC
+;
 ```
