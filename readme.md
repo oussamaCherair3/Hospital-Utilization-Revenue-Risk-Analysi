@@ -100,7 +100,8 @@ INNER JOIN procedures AS P ON EN.id=p.encounter group by p.description ORDER BY 
 ```
 - Average cost per patient (joining Patients and Encounters).
 ```sql 
-SELECT p.patient_id, p.first_name || ' ' || p.last_name AS full_name, AVG(e.base_encounter_cost) AS avg_cost
+SELECT p.patient_id, p.first_name || ' ' || p.last_name AS full_name,
+AVG(e.base_encounter_cost) AS avg_cost
 FROM patients p
 JOIN encounters e ON p.patient_id = e.patient_id
 GROUP BY p.patient_id, full_name
@@ -111,6 +112,49 @@ ORDER BY avg_cost DESC
 ```sql
 SELECT pre.description,gender,count(*) AS COUNT FROM procedures AS pre
 INNER JOIN patients AS p ON pre.patient = p.id
-INNER JOIN encounters AS en ON pre.encounter=en.id GROUP BY pre.description,p.gender ORDER BY COUNT DESC
-;
+INNER JOIN encounters AS en ON pre.encounter=en.id
+ GROUP BY pre.description,p.gender ORDER BY COUNT DESC;
+```
+- Total Claim Costs by Payer with Insurance Status
+
+```sql
+SELECT 
+    PAY.name AS payer_name,
+    SUM(EN.total_claim_cost) AS total_claim_cost,
+    CASE 
+        WHEN PAY.name = 'NO_INSURANCE' THEN 'SELF_PAID'
+        ELSE 'INSURANCE'
+    END AS insurance_state
+FROM patients AS P
+INNER JOIN encounters AS EN ON P.patient_id = EN.patient_id
+INNER JOIN payers AS PAY ON EN.payer_id = PAY.payer_id
+GROUP BY PAY.payer_id, PAY.name
+ORDER BY total_claim_cost DESC;
+```
+- Total claim cost with encouters number;
+```sql
+SELECT 
+    CASE 
+        WHEN PAY.name = 'NO_INSURANCE' THEN 'SELF_PAID'
+        ELSE 'INSURANCE'
+    END AS insurance_state,
+    COUNT(DISTINCT EN.encounter_id) AS total_encounters,
+    COUNT(DISTINCT P.patient_id) AS total_patients,
+    SUM(EN.total_claim_cost) AS total_claim_cost
+FROM patients AS P
+INNER JOIN encounters AS EN ON P.patient_id = EN.patient_id
+INNER JOIN payers AS PAY ON EN.payer_id = PAY.payer_id
+GROUP BY insurance_state
+ORDER BY total_claim_cost DESC;
+```
+- Insurers cover 80% of costs, but self-paid amounts are significant, suggesting opportunities for better coverage outreach.
+
+```sql
+SELECT 
+    COUNT(DISTINCT e.id) AS uninsured_patients,
+    SUM(e.total_claim_cost) AS total_uninsured_cost,
+    AVG(e.base_encounter_cost) AS avg_uninsured_encounter_cost
+FROM encounters e
+JOIN payers py ON e.payer = py.id
+WHERE py.name = 'NO_INSURANCE'; 
 ```
