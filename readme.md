@@ -63,6 +63,7 @@ During data inspection, the following patterns were identified and handled appro
 Number of living vs deceased patients based on `deathdate` values.
 - The Total Number Of Alive Patients: 820
 - The Total Number Of Deceased patients: 154
+- High survival rate—focus on preventive care?
 ```sql
 SELECT 
     COUNT(*) AS total_patients,
@@ -70,6 +71,7 @@ SELECT
     COUNT(CASE WHEN deathdate IS NOT NULL THEN 1 END) AS deceased_patients
 FROM patients;
 ```
+
 
 - Checking for Invalid dates
 ```sql
@@ -151,7 +153,7 @@ ORDER BY total_claim_cost DESC;
 
 ```sql
 SELECT 
-    COUNT(DISTINCT e.id) AS uninsured_patients,
+    COUNT(DISTINCT e.patient) AS uninsured_patients,
     SUM(e.total_claim_cost) AS total_uninsured_cost,
     AVG(e.base_encounter_cost) AS avg_uninsured_encounter_cost
 FROM encounters e
