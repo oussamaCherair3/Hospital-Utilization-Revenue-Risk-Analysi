@@ -112,7 +112,7 @@ ORDER BY avg_cost DESC
 - Most common procedures by gender.
 
 ```sql
-SELECT pre.description,gender,count(*) AS COUNT FROM procedures AS pre
+SELECT pre.description,p.gender,count(*) AS COUNT FROM procedures AS pre
 INNER JOIN patients AS p ON pre.patient = p.id
 INNER JOIN encounters AS en ON pre.encounter=en.id
  GROUP BY pre.description,p.gender ORDER BY COUNT DESC;
@@ -159,4 +159,29 @@ SELECT
 FROM encounters e
 JOIN payers py ON e.payer = py.id
 WHERE py.name = 'NO_INSURANCE'; 
+```
+- Noticed that some patient dont have any procedures, we need to check if they have any encounters.
+```sql
+SELECT p.id,first,last 
+FROM patients p
+LEFT JOIN procedures pr
+  ON pr.patient = p.id
+WHERE pr.patient IS NULL;
+```
+```sql
+SELECT first,
+last FROM patients
+WHERE patients.id NOT IN (SELECT DISTINCT patient  FROM procedures)
+ ```
+
+- Checking for encounters: All of the patient that dont have any procedures, have encounter range between 1 to 217.
+```sql 
+SELECT DISTINCT p.id, p.first, p.last,
+COUNT(en.id) AS Encounter_count
+FROM patients p  
+LEFT JOIN procedures pr ON pr.patient = p.id  
+LEFT JOIN encounters en ON en.patient = p.id 
+WHERE pr.patient IS NULL
+GROUP BY p.id, p.first, p.last
+ORDER BY Encounter_count DESC;
 ```
