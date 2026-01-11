@@ -25,7 +25,7 @@ SELECT COUNT(*) FROM encounters;
 - patients
 - encounters
 - procedures
-- oganizations
+- organizations
 - payers
 
 
@@ -77,8 +77,10 @@ FROM patients;
 ```sql
 SELECT id, birthdate, deathdate
 FROM patients
-WHERE birthdate > deathdate;
+WHERE birthdate >= deathdate;
 ```
+No Invalid dates found here. valid data
+
 - Most patients are in the 18-64 group, suggesting focus on adult care
 ```sql
 SELECT 
@@ -98,11 +100,11 @@ ORDER BY age_group;
 ```sql
 SELECT COUNT(p.description) AS procedure_count,p.description FROM patients AS Pat
 INNER JOIN encounters AS EN ON Pat.id = EN.patient
-INNER JOIN procedures AS P ON EN.id=p.encounter group by p.description ORDER BY COUNT(p.description);
+INNER JOIN procedures AS P ON EN.id=p.encounter group by p.description ORDER BY COUNT(p.description) LIMIT 5;
 ```
 - Average cost per patient (joining Patients and Encounters).
 ```sql 
-SELECT p.id, p.first_name || ' ' || p.last_name AS full_name,
+SELECT p.id, p.first || ' ' || p.last AS full_name,
 AVG(e.base_encounter_cost) AS avg_cost
 FROM patients p
 JOIN encounters e ON p.id = e.patient
@@ -115,7 +117,7 @@ ORDER BY avg_cost DESC
 SELECT pre.description,p.gender,count(*) AS COUNT FROM procedures AS pre
 INNER JOIN patients AS p ON pre.patient = p.id
 INNER JOIN encounters AS en ON pre.encounter=en.id
- GROUP BY pre.description,p.gender ORDER BY COUNT DESC;
+GROUP BY pre.description,p.gender ORDER BY COUNT DESC LIMIT 5;
 ```
 - Total Claim Costs by Payer with Insurance Status
 
@@ -160,7 +162,7 @@ FROM encounters e
 JOIN payers py ON e.payer = py.id
 WHERE py.name = 'NO_INSURANCE'; 
 ```
-- Noticed that some patient dont have any procedures, we need to check if they have any encounters.
+- Noticed that some patient don't have any procedures, we need to check if they have any encounters.
 ```sql
 SELECT p.id,first,last 
 FROM patients p
@@ -174,7 +176,7 @@ last FROM patients
 WHERE patients.id NOT IN (SELECT DISTINCT patient  FROM procedures)
  ```
 
-- Checking for encounters: All of the patient that dont have any procedures, have encounter range between 1 to 217.
+- Checking for encounters: All of the patient that don't have any procedures, have encounter range between 1 to 217.
 ```sql 
 SELECT DISTINCT p.id, p.first, p.last,
 COUNT(en.id) AS Encounter_count
