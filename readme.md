@@ -131,7 +131,7 @@ SELECT
     END AS insurance_state
 FROM patients AS P
 INNER JOIN encounters AS EN ON P.id = EN.patient
-INNER JOIN payers AS PAY ON EN.payer = PAY.payer
+INNER JOIN payers AS PAY ON EN.payer = PAY.id
 GROUP BY PAY.id, PAY.name
 ORDER BY total_claim_cost DESC;
 ```
