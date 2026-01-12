@@ -1,4 +1,4 @@
-## 📚 Data Source
+##  Data Source
 
 This hospital database is sourced from **Maven Analytics**.
 
@@ -21,7 +21,7 @@ SELECT COUNT(*) FROM encounters;
 ```
 - Data Range: 2021-2022
 
-## :card_file_box: Database Tables
+##  Database Tables
 - patients
 - encounters
 - procedures
@@ -45,7 +45,7 @@ FROM information_schema.columns
 WHERE table_schema = 'public'
 ORDER BY table_name, ordinal_position
 ```
-## :broom: Data Cleaning & Standardization
+##  Data Cleaning & Standardization
 
 During data inspection, the following patterns were identified and handled appropriately:
 
@@ -58,7 +58,7 @@ During data inspection, the following patterns were identified and handled appro
 
 
 
-## :bar_chart: Example Analytical Insights
+##  Example Analytical Insights
 
 Number of living vs deceased patients based on `deathdate` values.
 - The Total Number Of Alive Patients: 820
