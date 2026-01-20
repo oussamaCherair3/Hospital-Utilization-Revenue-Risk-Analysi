@@ -58,12 +58,12 @@ During data inspection, the following patterns were identified and handled appro
 
 
 
-##  Example Analytical Insights
+##   Analytical Insights
 
 Number of living vs deceased patients based on `deathdate` values.
 - The Total Number Of Alive Patients: 820
 - The Total Number Of Deceased patients: 154
-- High survival rate—focus on preventive care?
+- High survival rate—focus on preventive care.
 ```sql
 SELECT 
     COUNT(*) AS total_patients,
@@ -81,28 +81,37 @@ WHERE birthdate >= deathdate;
 ```
 No Invalid dates found here. valid data
 
-- Most patients are in the 18-64 group, suggesting focus on adult care
+- Patients 65+ average 6.3 encounters per patient, 2.3x higher than the 25-45 group (2.7 encounters).
+This means older patients consume significantly more healthcare resources.
+Analyze staffing levels to ensure geriatric care capacity matches our patient mix.
+
 ```sql
 SELECT 
-	CASE
-		WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) < 18 THEN 'Under 18'
-		WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 18 AND 25 THEN '18-25'
-		WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 25 AND 45 THEN '25-45'
-		WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 45 AND 65 THEN '45-65'
-		ELSE '65+'
-	END AS age_group,
-	COUNT(*) AS COUNT
-FROM patients WHERE deathdate IS  NULL
+    CASE
+        WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) < 18 THEN 'Under 18'
+        WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 18 AND 25 THEN '18-25'
+        WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 25 AND 45 THEN '25-45'
+        WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 45 AND 65 THEN '45-65'
+        ELSE '65+'
+    END AS age_group,
+    COUNT(DISTINCT patients.id) AS patient_count,
+    COUNT(encounters.id) AS total_encounters,
+    ROUND(COUNT(encounters.id)::NUMERIC / COUNT(DISTINCT patients.id), 1) AS encounters_per_patient
+FROM patients
+INNER JOIN encounters ON patients.id = encounters.patient
+WHERE deathdate IS NULL
 GROUP BY age_group
 ORDER BY age_group;
 ```
-- The Top 5 most common procedure descriptions performed in the hospital.
+- The top 5 procedures are preventive screenings (medication reconciliation, depression screening, substance use assessment), and patients 65+ have 2.3x more encounters than younger groups. This suggests the hospital focuses on chronic disease management for an aging population. Expand preventive care programs and ensure adequate geriatric specialist staffing
 ```sql
 SELECT COUNT(p.description) AS procedure_count,p.description FROM patients AS Pat
 INNER JOIN encounters AS EN ON Pat.id = EN.patient
-INNER JOIN procedures AS P ON EN.id=p.encounter group by p.description ORDER BY COUNT(p.description) LIMIT 5;
+INNER JOIN procedures AS P ON EN.id=p.encounter group by p.description ORDER BY COUNT(p.description) DESC LIMIT 5;
 ```
-- Average cost per patient (joining Patients and Encounters).
+
+
+- Average cost per patient
 ```sql 
 SELECT p.id, p.first || ' ' || p.last AS full_name,
 AVG(e.base_encounter_cost) AS avg_cost
@@ -119,7 +128,9 @@ INNER JOIN patients AS p ON pre.patient = p.id
 INNER JOIN encounters AS en ON pre.encounter=en.id
 GROUP BY pre.description,p.gender ORDER BY COUNT DESC LIMIT 5;
 ```
-- Total Claim Costs by Payer with Insurance Status
+- Total Claim Costs by Payer with Insurance Status, finding 10 insurance providers.
+- some patients have multiple payers, which means they have multiple insurance providers.
+- 27% of patients (262 out of 974) are uninsured, which means the hospital may not get paid for their care. This creates financial risk and potential bad debt. Connect uninsured patients with social workers to explore insurance enrollment or financial assistance programs.
 
 ```sql
 SELECT 
@@ -135,7 +146,6 @@ INNER JOIN payers AS PAY ON EN.payer = PAY.id
 GROUP BY PAY.id, PAY.name
 ORDER BY total_claim_cost DESC;
 ```
-- Total claim cost with encouters number;
 ```sql
 SELECT 
     CASE 
