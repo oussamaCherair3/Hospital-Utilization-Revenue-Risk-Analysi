@@ -1,18 +1,18 @@
-Table of Contents
+## Table of Contents
 
-Data Source
-Dataset
-Database Tables
-Data Cleaning & Standardization
-Analytical Insights
-Key Insights
-Recommendations
+- Data Source
+- Dataset
+- Database Tables
+- Data Cleaning & Standardization
+- Analytical Insights
+- Key Insights
+- Recommendations
 
-Data Source
+## Data Source
 This hospital database is sourced from Maven Analytics.
 
-Dataset: Hospital Patient Records  
-Provider: Maven Analytics
+- Dataset: Hospital Patient Records  
+- Provider: [Maven Analytics](https://mavenanalytics.io/data-playground/hospital-patient-records)
 Tool: PostgreSQL.
 Project Overview: "This repo analyzes a synthetic hospital dataset from Maven Analytics to uncover insights on patient demographics, encounters, and procedures. Skills demonstrated: SQL querying, data cleaning, exploratory analysis."
 Setup Instructions: How to replicate (e.g., "Load data into PostgreSQL via pgAdmin: CREATE DATABASE hospital; then import CSVs from Maven.")
@@ -20,29 +20,29 @@ Data Limitations: Note synthetic nature, date range (2021-2022), and any assumpt
 
 Dataset
 
-Total Patients (974)
+- Total Patients (974)
 
 ```SQL 
 SELECT COUNT(*) FROM patients;
 ```
 
-Total Encounters:27891
+- Total Encounters:27891
 
 ```SQL
 SELECT COUNT(*) FROM encounters;
 ```
 
-Data Range: 2021-2022
+Data Range: 2011-2022
 
-Database Tables
+## Database Tables
 
-patients
-encounters
-procedures
-organizations
-payers
+- patients
+- encounters
+- procedures
+- organizations
+- payers
 
-Basic Table Inspection Queries
+- Basic Table Inspection Queries
 ```SQL
 SELECT * FROM patients;
 SELECT * FROM encounters;
@@ -83,7 +83,7 @@ SELECT id, birthdate, deathdate
 FROM patients
 WHERE birthdate >= deathdate;
 ```
-No Invalid dates found here. valid data
+- No Invalid dates found here. valid data
 
 ```SQL
 SELECT
@@ -109,7 +109,7 @@ SELECT COUNT(p.description) AS procedure_count,p.description FROM patients AS Pa
 INNER JOIN encounters AS EN ON Pat.id = EN.patient
 INNER JOIN procedures AS P ON EN.id=p.encounter group by p.description ORDER BY COUNT(p.description) DESC LIMIT 5;
 ```
-Average cost per patient
+- Average cost per patient, Total cost per patient, and Insurance Coverage per patient.
 
 ```SQL
 SELECT p.id, p.first || ' ' || p.last AS   full_name,
@@ -201,8 +201,10 @@ ORDER BY Encounter_count DESC;
 This means older patients consume significantly more healthcare resources.
 The top 5 procedures are preventive screenings (medication reconciliation, depression screening, substance use assessment), and patients 65+ have 2.3x more encounters than younger groups. This suggests the hospital focuses on chronic disease management for an aging population.
 27% of patients (262 out of 974) are uninsured, which means the hospital may not get paid for their care. This creates financial risk and potential bad debt.
+- 181 patients (18.6%) have encounters but no recorded procedures, suggesting possible billing gaps or documentation issues.
 
 ## Recommendations
 - Analyze staffing levels to ensure geriatric care capacity matches our patient mix.
 - Expand preventive care programs and ensure adequate geriatric specialist staffing
 - Connect uninsured patients with social workers to explore insurance enrollment or financial assistance programs.
+- Review patients with encounters but no procedures to identify potential billing or documentation gaps.
