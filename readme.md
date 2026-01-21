@@ -13,10 +13,11 @@ This hospital database is sourced from Maven Analytics.
 
 - Dataset: Hospital Patient Records  
 - Provider: [Maven Analytics](https://mavenanalytics.io/data-playground/hospital-patient-records)
-Tool: PostgreSQL.
-Project Overview: "This repo analyzes a synthetic hospital dataset from Maven Analytics to uncover insights on patient demographics, encounters, and procedures. Skills demonstrated: SQL querying, data cleaning, exploratory analysis."
-Setup Instructions: How to replicate (e.g., "Load data into PostgreSQL via pgAdmin: CREATE DATABASE hospital; then import CSVs from Maven.")
-Data Limitations: Note synthetic nature, date range (2021-2022), and any assumptions (e.g., ages calculated as of 2023-01-01).
+- Tool: PostgreSQL.
+- Project Overview: "This repo analyzes a synthetic hospital dataset from Maven Analytics to uncover insights on patient demographics, encounters, and procedures.
+- Skills demonstrated: SQL querying, data cleaning, exploratory analysis."
+-vSetup Instructions: How to replicate (e.g., "Load data into PostgreSQL via pgAdmin: CREATE DATABASE hospital; then import CSVs from Maven.")
+- Data Limitations: Note synthetic nature, date range (2021-2022), and any assumptions (e.g., ages calculated as of 2023-01-01).
 
 Dataset
 
