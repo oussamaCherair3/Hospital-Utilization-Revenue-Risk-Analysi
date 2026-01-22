@@ -65,8 +65,8 @@ ORDER BY table_name, ordinal_position
 Categorical fields use abbreviated codes:
   - marital: S (Single), M (Married)
   - gender: M (Male), F (Female)
-These fields were standardized or interpreted consistently during analysis.
-Patient name fields contained non-alphabetic characters, indicating synthetic or unvalidated entries.
+- These fields were standardized or interpreted consistently during analysis.
+- Patient name fields contained non-alphabetic characters, indicating synthetic or unvalidated entries.
 
 ## Analytical Insights
 - Number of living vs deceased patients based on deathdate values.
@@ -143,7 +143,8 @@ FROM patients AS P
 INNER JOIN encounters AS EN ON P.id = EN.patient
 INNER JOIN payers AS PAY ON EN.payer = PAY.id
 GROUP BY PAY.id, PAY.name
-ORDER BY total_claim_cost DESC; ```
+ORDER BY total_claim_cost DESC;
+```
 
 ```SQL
 SELECT
@@ -158,7 +159,8 @@ FROM patients AS P
 INNER JOIN encounters AS EN ON P.id = EN.patient
 INNER JOIN payers AS PAY ON EN.payer = PAY.id
 GROUP BY insurance_state
-ORDER BY total_claim_cost DESC; ```
+ORDER BY total_claim_cost DESC;
+ ```
 ```SQL
 SELECT
     COUNT(DISTINCT e.patient) AS uninsured_patients,
