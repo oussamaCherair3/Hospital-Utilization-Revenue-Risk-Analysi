@@ -179,11 +179,11 @@ LEFT JOIN procedures pr
 WHERE pr.patient IS NULL;
 ```
 
-```SQL
+```sql
 SELECT first,
 last FROM patients
 WHERE patients.id NOT IN (SELECT DISTINCT patient  FROM procedures)
- ```
+```
 - Checking for encounters: All of the patient that don't have any procedures, have encounter range between 1 to 217.
 ```sql
 SELECT DISTINCT p.id, p.first, p.last,
