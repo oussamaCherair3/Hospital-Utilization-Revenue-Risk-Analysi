@@ -200,8 +200,12 @@ ORDER BY Encounter_count DESC;
 - The Total Number Of Alive Patients: 820
 - The Total Number Of Deceased patients: 154
 - High survival rate—focus on preventive care.
+
 - Patients 65+ average 6.3 encounters per patient, 2.3x higher than the 25-45 group (2.7 encounters).
 This means older patients consume significantly more healthcare resources.
+### Patients Count per Age Group
+![Patients Count per Age Group](images/Patients_Count_Per_Age_Group.png)
+
 The top 5 procedures are preventive screenings (medication reconciliation, depression screening, substance use assessment), and patients 65+ have 2.3x more encounters than younger groups. This suggests the hospital focuses on chronic disease management for an aging population.
 27% of patients (262 out of 974) are uninsured, which means the hospital may not get paid for their care. This creates financial risk and potential bad debt.
 - 181 patients (18.6%) have encounters but no recorded procedures, suggesting possible billing gaps or documentation issues.
