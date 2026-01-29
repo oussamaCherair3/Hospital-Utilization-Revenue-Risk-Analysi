@@ -201,6 +201,9 @@ ORDER BY Encounter_count DESC;
 ```
 ## Key Insights
 
+
+![Living Status](images/Living_Status.png)
+
 - The Total Number Of Alive Patients: 820
 - The Total Number Of Deceased patients: 154
 - High survival rate—focus on preventive care.
