@@ -206,7 +206,7 @@ This means older patients consume significantly more healthcare resources.
 ### Patients Count per Age Group
 | Age Group Distribution | Total Encounters By Age Group |
 |-----------------------|-------------------------------|
-| ![Patients Count](images/Patients_Count_Per_Age_Group.png) | ![Total Encounters](images/Total_Encounters_Per_Age_Group.png) |
+| ![Patients Count](images/Patients_Count_Per_Age_Group.png) | ![Total Encounters](images/Total_Encounters_Per_Age_Group.png) |  ![Average Encounters](images/Average_Encounter_Per_Age_Group.png)
 
 
 The top 5 procedures are preventive screenings (medication reconciliation, depression screening, substance use assessment), and patients 65+ have 2.3x more encounters than younger groups. This suggests the hospital focuses on chronic disease management for an aging population.
