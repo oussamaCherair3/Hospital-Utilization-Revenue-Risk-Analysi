@@ -204,7 +204,7 @@ ORDER BY Encounter_count DESC;
 - Patients 65+ average 6.3 encounters per patient, 2.3x higher than the 25-45 group (2.7 encounters).
 This means older patients consume significantly more healthcare resources.
 ### Patients Count per Age Group
-| Age Group Distribution | Total Encounters By Age Group |
+| Age Group Distribution | Total Encounters By Age Group | Average Encounter Per Age Group
 |-----------------------|-------------------------------|
 | ![Patients Count](images/Patients_Count_Per_Age_Group.png) | ![Total Encounters](images/Total_Encounters_Per_Age_Group.png) |  ![Average Encounters](images/Average_Encounter_Per_Age_Group.png)
 
