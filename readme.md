@@ -205,7 +205,7 @@ ORDER BY Encounter_count DESC;
 This means older patients consume significantly more healthcare resources.
 ### Patients Count per Age Group
 | Age Group Distribution | Total Encounters By Age Group | Average Encounter Per Age Group
-|-----------------------|-------------------------------|
+|-----------------------|-------------------------------|-------------------------------|
 | ![Patients Count](images/Patients_Count_Per_Age_Group.png) | ![Total Encounters](images/Total_Encounters_Per_Age_Group.png) |  ![Average Encounters](images/Average_Encounter_Per_Age_Group.png)
 
 
