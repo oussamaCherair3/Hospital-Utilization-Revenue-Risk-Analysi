@@ -202,7 +202,7 @@ ORDER BY Encounter_count DESC;
 ## Key Insights
 
 
-![Living Status](images/Living_Status.png)
+<img src='./images/Living_Status.png' width="300px" height="300px"/>
 
 - The Total Number Of Alive Patients: 820
 - The Total Number Of Deceased patients: 154
