@@ -1,12 +1,15 @@
-## Table of Contents
 
-- Data Source
-- Dataset
-- Database Tables
-- Data Cleaning & Standardization
-- Analytical Insights
-- Key Insights
-- Recommendations
+
+## Table of Contents
+- [Data Source](#data-source)
+  - [Dataset](#dataset)
+  - [Database Tables](#database-tables)
+- [Data Cleaning & Standardization](#data-cleaning--standardization)
+- [Analytical Insights](#analytical-insights)
+  - [Age Group Distribution](#age-group-distribution)
+  - [Total Encounters by Age Group](#total-encounters-by-age-group)
+- [Key Insights](#key-insights)
+- [Recommendations](#recommendations)
 
 ## Data Source
 This hospital database is sourced from Maven Analytics.
@@ -108,7 +111,8 @@ ORDER BY age_group;
 ```SQL
 SELECT COUNT(p.description) AS procedure_count,p.description FROM patients AS Pat
 INNER JOIN encounters AS EN ON Pat.id = EN.patient
-INNER JOIN procedures AS P ON EN.id=p.encounter group by p.description ORDER BY COUNT(p.description) DESC LIMIT 5;
+INNER JOIN procedures AS P ON EN.id=p.encounter
+group by p.description ORDER BY COUNT(p.description) DESC LIMIT 5;
 ```
 - Average cost per patient, Total cost per patient, and Insurance Coverage per patient.
 
@@ -201,16 +205,23 @@ ORDER BY Encounter_count DESC;
 - The Total Number Of Deceased patients: 154
 - High survival rate—focus on preventive care.
 
-- Patients 65+ average 6.3 encounters per patient, 2.3x higher than the 25-45 group (2.7 encounters).
-This means older patients consume significantly more healthcare resources.
-### Patients Count per Age Group
+
+
 | Age Group Distribution | Total Encounters By Age Group | Average Encounter Per Age Group
 |-----------------------|-------------------------------|-------------------------------|
 | ![Patients Count](images/Patients_Count_Per_Age_Group.png) | ![Total Encounters](images/Total_Encounters_Per_Age_Group.png) |  ![Average Encounters](images/Average_Encounter_Per_Age_Group.png)
 
+- Patients 65+ average 6.3 encounters per patient, 2.3x higher than the 25-45 group (2.7 encounters).
+This means older patients consume significantly more healthcare resources.
 
-The top 5 procedures are preventive screenings (medication reconciliation, depression screening, substance use assessment), and patients 65+ have 2.3x more encounters than younger groups. This suggests the hospital focuses on chronic disease management for an aging population.
-27% of patients (262 out of 974) are uninsured, which means the hospital may not get paid for their care. This creates financial risk and potential bad debt.
+- The 45–64 age group has more total encounters overall, but each patient in this group visits less frequently on average compared to the 25–44 group. This indicates that while there are more patients in the older group, younger patients tend to have repeat visits more often.
+
+- The top 5 procedures are preventive screenings (medication reconciliation, depression screening, substance use assessment), and patients 65+ have 2.3x more encounters than younger groups. This suggests the hospital focuses on chronic disease management for an aging population.
+
+
+
+
+- 27% of patients (262 out of 974) are uninsured, which means the hospital may not get paid for their care. This creates financial risk and potential bad debt.
 - 181 patients (18.6%) have encounters but no recorded procedures, suggesting possible billing gaps or documentation issues.
 
 ## Recommendations
