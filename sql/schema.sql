@@ -1,0 +1,22 @@
+CREATE TABLE patients(
+    id UUID PRIMARY KEY,
+    birthdate DATE NOT NULL,
+    deathdate DATA,
+    first VARCHAR(100) NOT NULL,
+    last VARCHAR(100) NOT NULL,
+    suffix VARCHAR(10),
+    maiden VARCHAR(100),
+    marital CHAR(1),
+    lon double PRECISION,
+    lat double PRECISION,
+    race VARCHAR(50),
+    ethnicity VARCHAR(50),
+    gender CHAR(1),
+    birthplace VARCHAR(100),
+    address VARCHAR(200),
+    city VARCHAR(100),
+    state CHAR(30),
+    county VARCHAR(100),
+    zip CHAR(10),
+    prefix VARCHAR(10)
+)

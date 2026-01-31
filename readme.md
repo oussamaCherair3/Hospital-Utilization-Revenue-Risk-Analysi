@@ -165,6 +165,7 @@ INNER JOIN payers AS PAY ON EN.payer = PAY.id
 GROUP BY insurance_state
 ORDER BY total_claim_cost DESC;
  ```
+ 
 ```SQL
 SELECT
     COUNT(DISTINCT e.patient) AS uninsured_patients,
@@ -189,6 +190,7 @@ last FROM patients
 WHERE patients.id NOT IN (SELECT DISTINCT patient  FROM procedures)
 ```
 - Checking for encounters: All of the patient that don't have any procedures, have encounter range between 1 to 217.
+
 ```sql
 SELECT DISTINCT p.id, p.first, p.last,
 COUNT(en.id) AS Encounter_count
