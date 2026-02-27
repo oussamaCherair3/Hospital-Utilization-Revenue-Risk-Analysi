@@ -1,0 +1,3 @@
+SELECT DISTINCT EXTRACT(YEAR FROM e.start) AS YEAR,
+COUNT(*) AS encounter FROM encounters E GROUP BY YEAR ORDER BY encounter DESC;
+

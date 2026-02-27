@@ -1,310 +1,64 @@
+# Hospital Utilization & Revenue Risk Analysis  
+SQL Insights from Patient Records (Maven Analytics)
 
+## Executive Summary
+- **Aging population is driving high resource use**: Patients 65+ average **6.3 encounters** per person — 2.3× more than the 25–45 group (2.7 encounters) — highlighting the need for expanded geriatric and chronic care capacity.
+- **Significant uninsured exposure**: Approximately **27%** of encounters have zero payer coverage, creating potential bad debt and revenue risk.
+- **Preventive care focus**: Top procedures are screenings (medication reconciliation, depression screening, substance use assessment) — strong opportunity to scale wellness programs for better long-term outcomes.
+- **Billing/documentation gaps**: **18.6%** of patients with encounters (181 individuals) have no recorded procedures — likely leading to missed charges or incomplete records.
+- **Financial disparities visible**: High-cost cases show varying insurance support, with some patients facing substantial out-of-pocket burdens despite coverage.
 
 ## Table of Contents
-- [Data Source](#data-source)
-  - [Dataset](#dataset)
-  - [Database Tables](#database-tables)
-- [Data Cleaning & Standardization](#data-cleaning--standardization)
-- [Analytical Insights](#analytical-insights)
-  - [Age Group Distribution](#age-group-distribution)
-  - [Total Encounters by Age Group](#total-encounters-by-age-group)
-- [Key Insights](#key-insights)
+- [Key Insights & Visuals](#key-insights--visuals)
 - [Recommendations](#recommendations)
+- [Data Source & Overview](#data-source--overview)
+- [Technical Details](#technical-details)
 
-## Data Source
-This hospital database is sourced from Maven Analytics.
+## Key Insights & Visuals
 
-- Dataset: Hospital Patient Records  
-- Provider: [Maven Analytics](https://mavenanalytics.io/data-playground/hospital-patient-records)
-- Tool: PostgreSQL.
-- Project Overview: "This repo analyzes a synthetic hospital dataset from Maven Analytics to uncover insights on patient demographics, encounters, and procedures.
-- Skills demonstrated: SQL querying, data cleaning, exploratory analysis."
--vSetup Instructions: How to replicate (e.g., "Load data into PostgreSQL via pgAdmin: CREATE DATABASE hospital; then import CSVs from Maven.")
-- Data Limitations: Note synthetic nature, date range (2021-2022), and any assumptions (e.g., ages calculated as of 2023-01-01).
+![Living vs Deceased Patients](images/Living_Status.png)  
+**Alive: 820** | **Deceased: 154** → High survival rate; strong foundation for preventive and chronic care programs.
 
-Dataset
+![Patients Count per Age Group](images/Patients_Count_Per_Age_Group.png)  
+![Total Encounters per Age Group](images/Total_Encounters_Per_Age_Group.png)  
+![Average Encounters per Patient by Age Group](images/Average_Encounter_Per_Age_Group.png)
 
-- Total Patients (974)
-
-```SQL 
-SELECT COUNT(*) FROM patients;
-```
-
-- Total Encounters:27891
-
-```SQL
-SELECT COUNT(*) FROM encounters;
-```
-
-Data Range: 2011-2022
-
-## Database Tables
-
-- patients
-- encounters
-- procedures
-- organizations
-- payers
-
-- Basic Table Inspection Queries
-```SQL
-SELECT * FROM patients;
-SELECT * FROM encounters;
-SELECT * FROM procedures;
-SELECT * FROM organizations;
-SELECT * FROM payers;
-``` 
-## Table Structure Example
-```SQL
-SELECT table_name, column_name, data_type, is_nullable
-FROM information_schema.columns
-WHERE table_schema = 'public'
-ORDER BY table_name, ordinal_position
-```
-## Data Cleaning & Standardization
-- During data inspection, the following patterns were identified and handled appropriately:
-
-- Optional demographic fields (suffix, maiden, zip) contain NULL values, which were treated as valid and left unchanged.
-Categorical fields use abbreviated codes:
-  - marital: S (Single), M (Married)
-  - gender: M (Male), F (Female)
-- These fields were standardized or interpreted consistently during analysis.
-- Patient name fields contained non-alphabetic characters, indicating synthetic or unvalidated entries.
-
-## Analytical Insights
-
-- How many total encounters occurred each year?
-```sql
-SELECT DISTINCT EXTRACT(YEAR FROM e.start) AS YEAR,
-COUNT(*) AS encounter FROM encounters E GROUP BY YEAR ORDER BY encounter DESC;
-```
-- For each year, what percentage of all encounters belonged to each encounter class
-(ambulatory, outpatient, wellness, urgent care, emergency, and inpatient)?
-
-```sql 
-SELECT
-    en.encounterclass, 
-    COUNT(en.encounterclass) AS encounter_class_count,
-    EXTRACT(YEAR FROM en.start::date) AS encounter_year,
-   ROUND(
-    COUNT(en.encounterclass) * 100.0
-    / SUM(COUNT(en.encounterclass)) OVER (
-        PARTITION BY EXTRACT(YEAR FROM en.start::date)),2) AS encounter_class_by_year
-FROM encounters en
-GROUP BY
-    en.encounterclass,
-    EXTRACT(YEAR FROM en.start::date)
-ORDER BY
-    encounter_year ASC,
-    encounter_class_count DESC;
-```
-- How many encounters had zero payer coverage, and what percentage of total encounters does this represent?
-```sql 
-SELECT 
-COUNT(*) AS No_Payer_Coverage,
-(COUNT(*)*100)/(SELECT COUNT(*) FROM encounters) AS coverage_percent
-FROM encounters
-WHERE payer_coverage=0;
-```
-- What are the top 10 most frequent procedures performed and the average base cost for each?
-```sql 
-SELECT COUNT(p.description) AS procedure_count,p.description,
-MAX(P.base_cost) AS base_cost
-FROM patients AS Pat
-INNER JOIN encounters AS EN ON Pat.id = EN.patient
-INNER JOIN procedures AS P ON EN.id=p.encounter
-group by p.description ORDER BY COUNT(p.description) DESC LIMIT 10;
-```
-- What are the top 10 procedures with the highest average base cost and the number of times they were performed?
-```sql
-SELECT
-    description,
-   ROUND(AVG(base_cost),2) AS avg_base_cost,
-    COUNT(*) AS times_performed
-FROM procedures
-GROUP BY description
-ORDER BY avg_base_cost DESC
-LIMIT 10;
-```
-
-- What is the average total claim cost for encounters, broken down by payer?
-```sql
-SELECT pa.name,
-ROUND(AVG(en.total_claim_cost),2) AS avg_claim_cost FROM encounters en
-INNER JOIN payers pa ON en.payer=pa.id
-GROUP BY pa.name
-ORDER BY avg_claim_cost DESC;
-```
-How many unique patients were admitted each quarter over time?
-```sql
-SELECT
-    EXTRACT(YEAR FROM start) AS year,
-    EXTRACT(QUARTER FROM start) AS quarter,
-    COUNT(DISTINCT patient) AS unique_patients_admitted
-FROM encounters
-WHERE encounterclass = 'inpatient'
-GROUP BY year, quarter
-ORDER BY year, quarter;
-```
-
-
-- Number of living vs deceased patients based on deathdate values.
-```SQL
-SELECT
-    COUNT(*) AS total_patients,
-    COUNT(CASE WHEN deathdate IS NULL THEN 1 END) AS living_patients,
-    COUNT(CASE WHEN deathdate IS NOT NULL THEN 1 END) AS deceased_patients
-FROM patients;
-```
-- Checking for Invalid dates
-
-```SQL
-SELECT id, birthdate, deathdate
-FROM patients
-WHERE birthdate >= deathdate;
-```
-- No Invalid dates found here. valid data
-
-```SQL
-SELECT
-    CASE
-        WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) < 18 THEN 'Under 18'
-        WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 18 AND 25 THEN '18-25'
-        WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 25 AND 45 THEN '25-45'
-        WHEN EXTRACT(YEAR FROM AGE('2023-01-01'::DATE,birthdate)) BETWEEN 45 AND 65 THEN '45-65'
-        ELSE '65+'
-    END AS age_group,
-    COUNT(DISTINCT patients.id) AS patient_count,
-    COUNT(encounters.id) AS total_encounters,
-    ROUND(COUNT(encounters.id)::NUMERIC / COUNT(DISTINCT patients.id), 1) AS encounters_per_patient
-FROM patients
-INNER JOIN encounters ON patients.id = encounters.patient
-WHERE deathdate IS NULL
-GROUP BY age_group
-ORDER BY age_group;
-```
-- Top 5 most common procedures by description.
-```SQL
-SELECT COUNT(p.description) AS procedure_count,p.description FROM patients AS Pat
-INNER JOIN encounters AS EN ON Pat.id = EN.patient
-INNER JOIN procedures AS P ON EN.id=p.encounter
-group by p.description ORDER BY COUNT(p.description) DESC LIMIT 5;
-```
-- Average cost per patient, Total cost per patient, and Insurance Coverage per patient.
-
-```SQL
-SELECT p.id, p.first || ' ' || p.last AS   full_name,
-ROUND(AVG(e.base_encounter_cost),2) AS Average_Cost,
-SUM(total_claim_cost) AS Total_Cost,SUM(e.payer_coverage) AS INSURANCE_Covrage
-FROM patients p
-JOIN encounters e ON p.id = e.patient
-GROUP BY p.id, full_name
-ORDER BY Average_Cost DESC,Total_Cost DESC,INSURANCE_Covrage
-```
-Most common procedures by gender.
-
-```SQL
-SELECT pre.description,p.gender,count(*) AS COUNT FROM procedures AS pre
-INNER JOIN patients AS p ON pre.patient = p.id
-INNER JOIN encounters AS en ON pre.encounter=en.id
-GROUP BY pre.description,p.gender ORDER BY COUNT DESC LIMIT 5;
-```
-- Total Claim Costs by Payer with Insurance Status, finding 10 insurance providers.
-some patients have multiple payers, which means they have multiple insurance providers.
-```SQL
-SELECT
-    PAY.name AS payer_name,
-    SUM(EN.total_claim_cost) AS total_claim_cost,
-    CASE
-        WHEN PAY.name = 'NO_INSURANCE' THEN 'SELF_PAID'
-        ELSE 'INSURANCE'
-    END AS insurance_state
-FROM patients AS P
-INNER JOIN encounters AS EN ON P.id = EN.patient
-INNER JOIN payers AS PAY ON EN.payer = PAY.id
-GROUP BY PAY.id, PAY.name
-ORDER BY total_claim_cost DESC;
-```
-
-```SQL
-SELECT
-    CASE
-        WHEN PAY.name = 'NO_INSURANCE' THEN 'SELF_PAID'
-        ELSE 'INSURANCE'
-    END AS insurance_state,
-    COUNT(DISTINCT EN.id) AS total_encounters,
-    COUNT(DISTINCT P.id) AS total_patients,
-    SUM(EN.total_claim_cost) AS total_claim_cost
-FROM patients AS P
-INNER JOIN encounters AS EN ON P.id = EN.patient
-INNER JOIN payers AS PAY ON EN.payer = PAY.id
-GROUP BY insurance_state
-ORDER BY total_claim_cost DESC;
- ```
- 
-```SQL
-SELECT
-    COUNT(DISTINCT e.patient) AS uninsured_patients,
-    SUM(e.total_claim_cost) AS total_uninsured_cost,
-    AVG(e.base_encounter_cost) AS avg_uninsured_encounter_cost
-FROM encounters e
-JOIN payers py ON e.payer = py.id
-WHERE py.name = 'NO_INSURANCE';
-```
-Noticed that some patient don't have any procedures, we need to check if they have any encounters.
-```SQL
-SELECT p.id,first,last
-FROM patients p
-LEFT JOIN procedures pr
-  ON pr.patient = p.id
-WHERE pr.patient IS NULL;
-```
-
-```sql
-SELECT first,
-last FROM patients
-WHERE patients.id NOT IN (SELECT DISTINCT patient  FROM procedures)
-```
-- Checking for encounters: All of the patient that don't have any procedures, have encounter range between 1 to 217.
-
-```sql
-SELECT DISTINCT p.id, p.first, p.last,
-COUNT(en.id) AS Encounter_count
-FROM patients p  
-LEFT JOIN procedures pr ON pr.patient = p.id  
-LEFT JOIN encounters en ON en.patient = p.id
-WHERE pr.patient IS NULL
-GROUP BY p.id, p.first, p.last
-ORDER BY Encounter_count DESC;
-```
-## Key Insights
-
-
-<img src='./images/Living_Status.png' width="300px" height="300px"/>
-
-- The Total Number Of Alive Patients: 820
-- The Total Number Of Deceased patients: 154
-- High survival rate—focus on preventive care.
-
-
-
-| Age Group Distribution | Total Encounters By Age Group | Average Encounter Per Age Group
-|-----------------------|-------------------------------|-------------------------------|
-| ![Patients Count](images/Patients_Count_Per_Age_Group.png) | ![Total Encounters](images/Total_Encounters_Per_Age_Group.png) |  ![Average Encounters](images/Average_Encounter_Per_Age_Group.png)
-
-- Patients 65+ average 6.3 encounters per patient, 2.3x higher than the 25-45 group (2.7 encounters).
-This means older patients consume significantly more healthcare resources.
-
-- The 45–64 age group has more total encounters overall, but each patient in this group visits less frequently on average compared to the 25–44 group. This indicates that while there are more patients in the older group, younger patients tend to have repeat visits more often.
-
-- The top 5 procedures are preventive screenings (medication reconciliation, depression screening, substance use assessment), and patients 65+ have 2.3x more encounters than younger groups. This suggests the hospital focuses on chronic disease management for an aging population.
-
-- 181 patients (18.6%) have encounters but no recorded procedures, suggesting possible billing gaps or documentation issues.
-
--The insurance coverage analysis reveals significant financial burden disparities among patients. Terresa418 Nader710 stands out with costs exceeding 250,000 and substantial insurance coverage around 200,000, though still facing considerable out-of-pocket expenses. Most other patients in the top 10 show total costs ranging from approximately 10,000 to 60,000, with varying levels of insurance coverage.
+- **65+ patients consume significantly more healthcare resources** (6.3 avg encounters vs. 2.7 in younger groups).
+- **45–64 age group** has the highest total encounter volume, but lower per-patient frequency — younger cohorts drive more repeat visits.
+- **Top procedures are preventive** → aligns well with managing chronic conditions in an aging population.
+- **Uninsured burden** → ~27% of encounters self-paid; individual cases show high costs with partial or no coverage.
+- **18.6% of patients** with encounters lack any procedures → points to potential documentation, billing, or process gaps.
 
 ## Recommendations
-- Analyze staffing levels to ensure geriatric care capacity matches our patient mix.
-- Expand preventive care programs and ensure adequate geriatric specialist staffing
-- Connect uninsured patients with social workers to explore insurance enrollment or financial assistance programs.
-- Review patients with encounters but no procedures to identify potential billing or documentation gaps.
+1. Increase geriatric and chronic disease management staffing to better handle the 2.3× higher utilization from patients 65+.
+2. Expand preventive screening and wellness programs (focus on medication reconciliation, depression, substance use) to reduce future chronic costs.
+3. Develop outreach with social workers to assist uninsured/self-paid patients (~27% of encounters) with insurance enrollment or financial aid programs → reduce bad debt risk.
+4. Audit encounters without recorded procedures (181 patients) to identify and fix documentation/billing gaps → improve revenue capture and data quality.
+
+## Data Source & Overview
+- Synthetic Hospital Patient Records dataset from [Maven Analytics](https://mavenanalytics.io/data-playground/hospital-patient-records).
+- PostgreSQL analysis: 974 patients, 27,891 encounters, data spanning 2011–2022.
+- Ages calculated as of 2023-01-01; synthetic data (no real PHI).
+- Quick setup: `CREATE DATABASE hospital;` → import CSVs via pgAdmin or psql.
+
+**Entity Relationship Diagram** (add image when ready):  
+![Hospital Database ERD](images/hospital_erd.png)
+
+## Technical Details
+All SQL analysis is in the [sql/ folder](sql/). Organized by topic:
+
+- Demographics: `living-vs-deceased.sql`, `age-group-distribution.sql`
+- Utilization & Trends: `encounters-by-year.sql`, `encounter-class-pct-by-year.sql`
+- Procedures: `top-10-frequent-procedures.sql`, `top-5-procedures.sql`, `top-procedures-by-gender.sql`, `top-10-highest-avg-cost-procedures.sql`
+- Financial & Insurance: `uninsured-encounters-pct.sql`, `uninsured-patients-summary.sql`, `claims-by-payer-insurance-status.sql`, `avg-claim-cost-by-payer.sql`, `cost-and-coverage-per-patient.sql`
+- Data Quality: `patients-encounters-no-procedures.sql`, `invalid-dates-check.sql`
+
+<details>
+<summary>Data Cleaning Summary (click to expand)</summary>
+
+- NULLs in optional fields (suffix, maiden, zip) treated as valid.
+- Categorical codes interpreted consistently (marital: S/M, gender: M/F).
+- Synthetic names with non-alphabetic characters expected — no impact on analysis.
+- No invalid dates found (birthdate ≥ deathdate).
+
+</details>
