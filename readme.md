@@ -72,6 +72,82 @@ Categorical fields use abbreviated codes:
 - Patient name fields contained non-alphabetic characters, indicating synthetic or unvalidated entries.
 
 ## Analytical Insights
+
+- How many total encounters occurred each year?
+```sql
+SELECT DISTINCT EXTRACT(YEAR FROM e.start) AS YEAR,
+COUNT(*) AS encounter FROM encounters E GROUP BY YEAR ORDER BY encounter DESC;
+```
+- For each year, what percentage of all encounters belonged to each encounter class
+(ambulatory, outpatient, wellness, urgent care, emergency, and inpatient)?
+
+```sql 
+SELECT
+    en.encounterclass, 
+    COUNT(en.encounterclass) AS encounter_class_count,
+    EXTRACT(YEAR FROM en.start::date) AS encounter_year,
+   ROUND(
+    COUNT(en.encounterclass) * 100.0
+    / SUM(COUNT(en.encounterclass)) OVER (
+        PARTITION BY EXTRACT(YEAR FROM en.start::date)),2) AS encounter_class_by_year
+FROM encounters en
+GROUP BY
+    en.encounterclass,
+    EXTRACT(YEAR FROM en.start::date)
+ORDER BY
+    encounter_year ASC,
+    encounter_class_count DESC;
+```
+- How many encounters had zero payer coverage, and what percentage of total encounters does this represent?
+```sql 
+SELECT 
+COUNT(*) AS No_Payer_Coverage,
+(COUNT(*)*100)/(SELECT COUNT(*) FROM encounters) AS coverage_percent
+FROM encounters
+WHERE payer_coverage=0;
+```
+- What are the top 10 most frequent procedures performed and the average base cost for each?
+```sql 
+SELECT COUNT(p.description) AS procedure_count,p.description,
+MAX(P.base_cost) AS base_cost
+FROM patients AS Pat
+INNER JOIN encounters AS EN ON Pat.id = EN.patient
+INNER JOIN procedures AS P ON EN.id=p.encounter
+group by p.description ORDER BY COUNT(p.description) DESC LIMIT 10;
+```
+- What are the top 10 procedures with the highest average base cost and the number of times they were performed?
+```sql
+SELECT
+    description,
+   ROUND(AVG(base_cost),2) AS avg_base_cost,
+    COUNT(*) AS times_performed
+FROM procedures
+GROUP BY description
+ORDER BY avg_base_cost DESC
+LIMIT 10;
+```
+
+- What is the average total claim cost for encounters, broken down by payer?
+```sql
+SELECT pa.name,
+ROUND(AVG(en.total_claim_cost),2) AS avg_claim_cost FROM encounters en
+INNER JOIN payers pa ON en.payer=pa.id
+GROUP BY pa.name
+ORDER BY avg_claim_cost DESC;
+```
+How many unique patients were admitted each quarter over time?
+```sql
+SELECT
+    EXTRACT(YEAR FROM start) AS year,
+    EXTRACT(QUARTER FROM start) AS quarter,
+    COUNT(DISTINCT patient) AS unique_patients_admitted
+FROM encounters
+WHERE encounterclass = 'inpatient'
+GROUP BY year, quarter
+ORDER BY year, quarter;
+```
+
+
 - Number of living vs deceased patients based on deathdate values.
 ```SQL
 SELECT
@@ -80,7 +156,7 @@ SELECT
     COUNT(CASE WHEN deathdate IS NOT NULL THEN 1 END) AS deceased_patients
 FROM patients;
 ```
-Checking for Invalid dates
+- Checking for Invalid dates
 
 ```SQL
 SELECT id, birthdate, deathdate
@@ -223,11 +299,9 @@ This means older patients consume significantly more healthcare resources.
 
 - The top 5 procedures are preventive screenings (medication reconciliation, depression screening, substance use assessment), and patients 65+ have 2.3x more encounters than younger groups. This suggests the hospital focuses on chronic disease management for an aging population.
 
-
-
-
-- 27% of patients (262 out of 974) are uninsured, which means the hospital may not get paid for their care. This creates financial risk and potential bad debt.
 - 181 patients (18.6%) have encounters but no recorded procedures, suggesting possible billing gaps or documentation issues.
+
+-The insurance coverage analysis reveals significant financial burden disparities among patients. Terresa418 Nader710 stands out with costs exceeding 250,000 and substantial insurance coverage around 200,000, though still facing considerable out-of-pocket expenses. Most other patients in the top 10 show total costs ranging from approximately 10,000 to 60,000, with varying levels of insurance coverage.
 
 ## Recommendations
 - Analyze staffing levels to ensure geriatric care capacity matches our patient mix.
