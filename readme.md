@@ -1,5 +1,3 @@
-# Hospital Utilization & Revenue Risk Analysis  
-SQL Insights from Patient Records (Maven Analytics)
 
 ## Project Background
 As part of building practical data analysis skills for healthcare operations roles, I analyzed a synthetic hospital patient dataset to simulate real-world questions that hospital finance, revenue cycle, and operations teams face every day.
@@ -48,6 +46,7 @@ This project reflects the type of quick, high-value analysis I aim to deliver in
 ![Total Encounters per Age Group](images/Total_Encounters_Per_Age_Group.png)  
 ![Average Encounters per Patient by Age Group](images/Average_Encounter_Per_Age_Group.png)
 
+
 - **65+ patients consume significantly more healthcare resources** (6.3 avg encounters vs. 2.7 in younger groups).
 - **45–64 age group** has the highest total encounter volume, but lower per-patient frequency — younger cohorts drive more repeat visits.
 - **Top procedures are preventive** → aligns well with managing chronic conditions in an aging population.
@@ -62,8 +61,7 @@ This project reflects the type of quick, high-value analysis I aim to deliver in
 
 
 
-**Entity Relationship Diagram** (add image when ready):  
-![Hospital Database ERD](images/hospital_erd.png)
+
 
 ## Technical Details
 SQL queries for data inspection, quality checks (e.g., invalid dates, no-procedure encounters), demographics, utilization trends, procedures, financial breakdowns, and insurance analysis are organized in the [sql/ folder](sql/). Organized by topic:
