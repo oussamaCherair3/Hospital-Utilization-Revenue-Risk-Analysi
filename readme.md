@@ -45,7 +45,7 @@ This project reflects the type of quick, high-value analysis I aim to deliver in
 ![Patients Count per Age Group](images/Patients_Count_Per_Age_Group.png)  
 ![Total Encounters per Age Group](images/Total_Encounters_Per_Age_Group.png)  
 ![Average Encounters per Patient by Age Group](images/Average_Encounter_Per_Age_Group.png)
-![Average Encounters per Patient by Age Group](images/Annual-Distribution-of-Patient-Encounters-Across-Care-Settings.png)
+![Encounter Class per year](images/encounter-class-per-year.png)
 
 - **65+ patients consume significantly more healthcare resources** (6.3 avg encounters vs. 2.7 in younger groups).
 - **45–64 age group** has the highest total encounter volume, but lower per-patient frequency — younger cohorts drive more repeat visits.
