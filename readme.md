@@ -1,6 +1,6 @@
 
 ## Project Background
-As part of building practical data analysis skills for healthcare operations roles, I analyzed a synthetic hospital patient dataset to simulate real-world questions that hospital finance, revenue cycle, and operations teams face every day.
+As part of building practical data analysis skills for healthcare operations roles, I analyzed a Massachussets General Hospital patient dataset to simulate real-world questions that hospital finance, revenue cycle, and operations teams face every day.
 
 The goal was to move beyond basic counts and explore **cost-weighted patterns**, **resource utilization by patient segment**, and **potential revenue risks** — the kinds of insights that actually influence staffing decisions, preventive program budgets, bad debt reserves, and documentation audits.
 
