@@ -45,14 +45,28 @@ This project reflects the type of quick, high-value analysis I aim to deliver in
 ![Patients Count per Age Group](images/Patients_Count_Per_Age_Group.png)  
 ![Total Encounters per Age Group](images/Total_Encounters_Per_Age_Group.png)  
 ![Average Encounters per Patient by Age Group](images/Average_Encounter_Per_Age_Group.png)
-![Encounter Class per year](images/encounter-class-per-year.png)
+
 
 - **65+ patients consume significantly more healthcare resources** (6.3 avg encounters vs. 2.7 in younger groups).
 - **45–64 age group** has the highest total encounter volume, but lower per-patient frequency — younger cohorts drive more repeat visits.
 - **Top procedures are preventive** → aligns well with managing chronic conditions in an aging population.
-- **Uninsured burden** → ~27% of encounters self-paid; individual cases show high costs with partial or no coverage.
+- **Uninsured burden**  ~27% of encounters self-paid; individual cases show high costs with partial or no coverage.
 - **18.6% of patients** with encounters lack any procedures → points to potential documentation, billing, or process gaps.
 
+![Encounter Class per year](images/encounter-class-per-year.png)
+
+- **Ambulatory dominates consistently** the highest-volume encounter class every single year — peaking dramatically in 2014 (2,300), The 2014 West African Ebola outbreak caused widespread public fear peaking in October 2014.
+This explains why only ambulatory spiked — not inpatient or emergency — because most visits were precautionary, not acute.
+
+- **Outpatient surges in 2021** Outpatient encounters spike sharply to ~1,400 in 2021 — likely a COVID-19 recovery effect, as patients deferred care in 2020 and returned in 2021. This is a textbook post-pandemic rebound pattern.
+- **2020 shows a visible dip across most categories**
+Emergency, inpatient, and wellness encounters all dip in 2020 — consistent with pandemic-era avoidance of healthcare facilities.
+- **Inpatient remains consistently low**
+Inpatient stays are minimal throughout, suggesting either a healthy population base or successful outpatient management of conditions.
+**2022 data appears incomplete**
+Values drop sharply in 2022 — this is almost certainly a partial year data extract, not a real trend. Flag this clearly if presenting to stakeholders.
+- **Wellness encounters are flat and low**
+Preventive/wellness visits never exceed ~200 any year. This could signal an underutilization of preventive care — a common finding worth highlighting for health system leadership.
 ## Recommendations
 1. Increase geriatric and chronic disease management staffing to better handle the 2.3× higher utilization from patients 65+.
 2. Expand preventive screening and wellness programs (focus on medication reconciliation, depression, substance use) to reduce future chronic costs.
