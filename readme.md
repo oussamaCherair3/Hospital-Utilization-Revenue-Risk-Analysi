@@ -19,6 +19,11 @@ All data is fictional and contains no real PHI.
 
 This project reflects the type of quick, high-value analysis I aim to deliver in a junior/mid-level data analyst role — turning raw encounter and claims data into clear business risks and actionable recommendations.
 
+
+### Hospital Database ER Diagram
+
+![Hospital ER Diagram](images/ER_Diagram.png)
+
 ## Executive Summary
 - **Aging population is driving high resource use**: Patients 65+ average **6.3 encounters** per person — 2.3× more than the 25–45 group (2.7 encounters) — highlighting the need for expanded geriatric and chronic care capacity.
 - **Significant Uninsured Exposure**: Approximately **48%** of encounters have zero payer coverage, generating **$63.1M** in potential bad debt — representing **62%** of total hospital costs — creating substantial revenue risk for Maven Hospital.
@@ -61,7 +66,7 @@ This project reflects the type of quick, high-value analysis I aim to deliver in
 ![Hospital Database ERD](images/hospital_erd.png)
 
 ## Technical Details
-All SQL analysis is in the [sql/ folder](sql/). Organized by topic:
+SQL queries for data inspection, quality checks (e.g., invalid dates, no-procedure encounters), demographics, utilization trends, procedures, financial breakdowns, and insurance analysis are organized in the [sql/ folder](sql/). Organized by topic:
 
 - Demographics: `living-vs-deceased.sql`, `age-group-distribution.sql`
 - Utilization & Trends: `encounters-by-year.sql`, `encounter-class-pct-by-year.sql`
